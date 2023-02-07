@@ -1,0 +1,2 @@
+# hotoka
+A discord bot
