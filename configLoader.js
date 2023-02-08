@@ -97,19 +97,22 @@ function loadConfig(path, format) {
 	const formatAvailable = format !== undefined && typeof format === 'object'
 
 	if(!fileExists && formatAvailable) {
-		console.log('No configuration file available... Creating ${path}')
+		console.log(`No configuration file available... Creating ${path}`)
 
-		let defaultConfigRaw = JSON.toString(format);
+		let defaultConfig = objectToProperties(format);
 
-		fs.mkdirSync(path, { recursive: true }, error => {
+		// Get the directory's path, otherwise we'll make a directory with the filename and we don't want that.
+		let pathDir = path.split('/')
+		pathDir.pop()
+		pathDir = pathDir.join('/');
+
+		fs.mkdirSync(pathDir, { recursive: true }, error => {
 			if(error) {
 				console.error('Error creating directory.');
 				return;
 			}
 
-			if(!error) {
-				console.log('Created directory!');
-			}
+			console.log('Created directory!');
 		});
 
 		fs.writeFile(path, defaultConfig, error => {
@@ -118,32 +121,15 @@ function loadConfig(path, format) {
 				return;
 			}
 
-			if(!error) {
-				console.log('Created configuration file with default values.');
-			}
+			console.log('Created configuration file with default values.');
 		});
 
 		return format;
 	}
+
+	let props = fs.readFileSync(path, 'utf8');
+
+	return propertiesToObject(props, format);
 }
 
-let sampleConfig = {
-	general: {
-		name: 'Gamebot',
-		version: '0.2',
-		rev: 1
-	},
-
-	config: {
-		token: '84329104o3jh143h4i32h413h2o41i3412jk4l3j2k14',
-		hashKey: '4391-4083904-01434190-3418-43821-9048908490-31'
-	}
-}
-
-console.log('Original')
-console.log(sampleConfig);
-
-let file = objectToProperties(sampleConfig);
-
-console.log('\n Result');
-console.log(propertiesToObject(file, sampleConfig));
+module.exports = loadConfig;
