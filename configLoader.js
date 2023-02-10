@@ -47,7 +47,7 @@ function objectToProperties(obj) {
 		
 		result += '\n';
 	}
-
+	
 	return result;
 }
 
@@ -115,13 +115,13 @@ function loadConfig(path, format) {
 			console.log('Created directory!');
 		});
 
-		fs.writeFile(path, defaultConfig, error => {
+		fs.writeFileSync(path, defaultConfig, error => {
 			if(error) {
 				console.error('Error when creating config file.')
 				return;
 			}
 
-			console.log('Created configuration file with default values.');
+			console.log('Created configuration file with default values:\n' + defaultConfig);
 		});
 
 		return format;
